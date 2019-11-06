@@ -59,6 +59,11 @@ func (data *Data) GetHttpResponse(ip string, c chan string) string {
 		return "0"
 	}
 	if FindWord(string(buf[0:count]), data.value) {
+		tmp := ":"
+		if FindWord(string(buf[0:count]), "CF-Cache-Status") {
+			tmp = ":cloudFlare Cdn"
+		}
+		ip = ip + tmp
 		c <- ip
 		return ip
 	} else {
@@ -119,10 +124,10 @@ func (data *Data) ReciveMessage(c chan string) {
 					fmt.Printf("open err%s", err)
 					return
 				}
-				s := fmt.Sprintf("ip:%s,port:%s,domain:%s,关键字:%s\n", dd[0], dd[1], data.domain, data.value)
+				s := fmt.Sprintf("ip:%s,port:%s,domain:%s,关键字:%s,备注:%s\n", dd[0], dd[1], data.domain, data.value, dd[2])
 				f.WriteString(s)
 				f.Close()
-				fmt.Printf("\nip:%s,port:%s,domain:%s,关键字:%s\n", dd[0], dd[1], data.domain, data.value)
+				fmt.Printf("ip:%s,port:%s,domain:%s,关键字:%s,备注:%s\n", dd[0], dd[1], data.domain, data.value, dd[2])
 			} else {
 				fmt.Printf("\r%.8f%", i/d*100)
 			}
